@@ -9,3 +9,8 @@ internal fun String.toReadableClassName(): String = when {
   contains(FORWARD_SLASH) -> replace(FORWARD_SLASH, DOT)
   else -> throw UnsupportedOperationException("Unknown class name: $this")
 }
+
+internal fun String.getParameterTypeName(): String? = when {
+  startsWith("()") -> null
+  else -> substring(1, indexOf(')')).toReadableClassName()
+}

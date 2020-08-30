@@ -61,9 +61,9 @@ class ReadClassFileUseCaseTest {
     val invokables = listOf(
       DefaultConstructor,
       Method("getName"),
-      Method("setName"),
+      Method("setName", ParameterType("java.lang.String")),
       Method("getBreed"),
-      Method("setBreed")
+      Method("setBreed", ParameterType("java.lang.String"))
     )
     val fields = listOf(
       Field("name", "java.lang.String"),

@@ -9,5 +9,6 @@ object DefaultConstructor : Invokable() {
 }
 
 data class Method(
-  val name: String
+  val name: String,
+  val parameterType: ParameterType? =  null
 ) : Invokable()
