@@ -3,12 +3,14 @@ package io.redgreen.metro
 import com.google.common.truth.Truth.assertThat
 import io.redgreen.metro.ReadClassFileUseCase.Result
 import org.junit.jupiter.api.Test
+import java.io.File
 import java.io.InputStream
 
 class ReadClassFileUseCaseTest {
   companion object {
-    private const val EMPTY_CLASS_FILE = "/classes/Puppy.class"
-    private const val CLASS_WITH_FIELDS_FILE = "/classes/Kitten.class"
+    private const val CLASS_FILES_PATH = "./../core-test-fixtures/build/classes/java/main/io/redgreen/example"
+    private const val EMPTY_CLASS_FILE = "Puppy.class"
+    private const val CLASS_WITH_FIELDS_FILE = "Kitten.class"
   }
 
   private val readClassFileUseCase = ReadClassFileUseCase()
@@ -22,8 +24,8 @@ class ReadClassFileUseCaseTest {
     val result = readClassFileUseCase.invoke(emptyClassFileStream)
 
     // then
-    assertThat(result.className)
-      .isEqualTo("io.redgreen.example.Puppy")
+    assertThat(result)
+      .isEqualTo(Result("io.redgreen.example.Puppy", emptyList()))
   }
 
   @Test
@@ -45,8 +47,8 @@ class ReadClassFileUseCaseTest {
       .isEqualTo(expectedResult)
   }
 
-  private fun readClassFile(resourceFile: String): InputStream {
-    return ReadClassFileUseCaseTest::class.java
-      .getResourceAsStream(resourceFile)
+  private fun readClassFile(classFileName: String): InputStream {
+    return File("$CLASS_FILES_PATH/$classFileName")
+      .inputStream()
   }
 }
