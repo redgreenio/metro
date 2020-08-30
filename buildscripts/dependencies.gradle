@@ -7,6 +7,7 @@ buildscript {
     kotlin       : [
       jdkStdlib: 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     ],
+    asm          : 'org.ow2.asm:asm:8.0.1',
     logback      : 'ch.qos.logback:logback-classic:1.2.3',
 
     // Code Quality
