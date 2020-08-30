@@ -11,6 +11,7 @@ class ReadClassFileUseCaseTest {
     private const val CLASS_FILES_PATH = "./../core-test-fixtures/build/classes/java/main/io/redgreen/example"
     private const val EMPTY_CLASS_FILE = "Puppy.class"
     private const val CLASS_WITH_FIELDS_FILE = "Kitten.class"
+    private const val CLASS_WITH_FIELDS_AND_METHODS_FILE = "Dino.class"
   }
 
   private val readClassFileUseCase = ReadClassFileUseCase()
@@ -21,11 +22,12 @@ class ReadClassFileUseCaseTest {
     val emptyClassFileStream = readClassFile(EMPTY_CLASS_FILE)
 
     // when
-    val result = readClassFileUseCase.invoke(emptyClassFileStream)
+    val actual = readClassFileUseCase.invoke(emptyClassFileStream)
 
     // then
-    assertThat(result)
-      .isEqualTo(Result("io.redgreen.example.Puppy", emptyList()))
+    val expected = Result("io.redgreen.example.Puppy")
+    assertThat(actual)
+      .isEqualTo(expected)
   }
 
   @Test
@@ -34,17 +36,42 @@ class ReadClassFileUseCaseTest {
     val classWithFieldsStream = readClassFile(CLASS_WITH_FIELDS_FILE)
 
     // when
-    val actualResult = readClassFileUseCase.invoke(classWithFieldsStream)
+    val actual = readClassFileUseCase.invoke(classWithFieldsStream)
 
     // then
     val fields = listOf(
       Field("name", "java.lang.String"),
       Field("age", "int")
     )
-    val expectedResult = Result("io.redgreen.example.Kitten", fields)
+    val expected = Result("io.redgreen.example.Kitten", fields)
 
-    assertThat(actualResult)
-      .isEqualTo(expectedResult)
+    assertThat(actual)
+      .isEqualTo(expected)
+  }
+
+  @Test
+  fun `it should retrieve invokables from a class file`() {
+    // given
+    val classWithFieldsAndMethodsStream = readClassFile(CLASS_WITH_FIELDS_AND_METHODS_FILE)
+
+    // when
+    val actual = readClassFileUseCase.invoke(classWithFieldsAndMethodsStream)
+
+    // then
+    val invokables = listOf(
+      DefaultConstructor,
+      Method("getName"),
+      Method("setName"),
+      Method("getBreed"),
+      Method("setBreed")
+    )
+    val fields = listOf(
+      Field("name", "java.lang.String"),
+      Field("breed", "java.lang.String")
+    )
+    val expected = Result("io.redgreen.example.Dino", fields, invokables)
+    assertThat(actual)
+      .isEqualTo(expected)
   }
 
   private fun readClassFile(classFileName: String): InputStream {
