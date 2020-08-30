@@ -1,0 +1,27 @@
+buildscript {
+  ext.versions = [
+    jvm: '1.8'
+  ]
+
+  ext.artefacts = [
+    kotlin       : [
+      jdkStdlib: 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    ],
+    logback      : 'ch.qos.logback:logback-classic:1.2.3',
+
+    // Code Quality
+    detekt       : [
+      'cli'    : 'io.gitlab.arturbosch.detekt:detekt-cli:1.9.1',
+      'plugins': 'io.gitlab.arturbosch.detekt:detekt-formatting:1.9.1'
+    ],
+
+    // Unit tests
+    junit        : [
+      api    : 'org.junit.jupiter:junit-jupiter-api:5.6.0',
+      runtime: 'org.junit.jupiter:junit-jupiter-engine:5.6.0',
+      params : 'org.junit.jupiter:junit-jupiter-params:5.6.0'
+    ],
+    truth        : 'com.google.truth:truth:1.0.1',
+    mockitoKotlin: 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
+  ]
+}

@@ -1,0 +1,17 @@
+# Files
+local.properties
+*.iml
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+*/build
+
+# IntelliJ Settings
+/.idea/*
+/.idea/caches
+/.idea/codeStyles
+/.idea/libraries
+!/.idea/runConfigurations

@@ -1,0 +1,11 @@
+# top-most EditorConfig file
+root = true
+
+# Newline ending every file
+[*]
+insert_final_newline = true
+
+# 2 space indentation
+[*.{java,kt,gradle,xml,json}]
+indent_style = space
+indent_size = 2
