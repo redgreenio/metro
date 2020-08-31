@@ -38,12 +38,16 @@ class MetroClassVisitor : ClassVisitor(ASM4) {
     } else {
       val parameterTypes = descriptor
         .getParameterTypeNames()
-        .map(::ParameterType)
+        .map(::Type)
 
       if (name == "<init>") {
         Constructor(parameterTypes)
       } else {
-        Method(name, parameterTypes)
+        val returnTypeName = descriptor
+          .substring(descriptor.lastIndexOf(')') + 1)
+          .toReadableTypeName()
+
+        Method(name, parameterTypes, Type(returnTypeName))
       }
     }
     invokables.add(invokable)

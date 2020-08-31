@@ -50,10 +50,10 @@ class ReadClassFileUseCaseTest {
     // then
     val invokables = listOf(
       DefaultConstructor,
-      Method("getName"),
-      Method("setName", listOf(ParameterType("java.lang.String"))),
-      Method("getBreed"),
-      Method("setBreed", listOf(ParameterType("java.lang.String")))
+      Method("getName", returnType = Type("java.lang.String")),
+      Method("setName", listOf(Type("java.lang.String"))),
+      Method("getBreed", returnType = Type("java.lang.String")),
+      Method("setBreed", listOf(Type("java.lang.String")))
     )
     val fields = listOf(
       Field("name", "java.lang.String"),
@@ -75,9 +75,9 @@ class ReadClassFileUseCaseTest {
       Method(
         "procrastinate",
         listOf(
-          ParameterType("java.lang.String"),
-          ParameterType("java.util.Date"),
-          ParameterType("int")
+          Type("java.lang.String"),
+          Type("java.util.Date"),
+          Type("int")
         )
       )
     )
@@ -95,8 +95,8 @@ class ReadClassFileUseCaseTest {
     val invokables = listOf(
       Constructor(
         listOf(
-          ParameterType("java.lang.String"),
-          ParameterType("double")
+          Type("java.lang.String"),
+          Type("double")
         )
       )
     )

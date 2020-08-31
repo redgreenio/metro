@@ -10,9 +10,10 @@ object DefaultConstructor : Invokable() {
 
 data class Method(
   val name: String,
-  val parameterTypes: List<ParameterType> = emptyList()
+  val parameterTypes: List<Type> = emptyList(),
+  val returnType: Type = Type.VOID
 ) : Invokable()
 
 data class Constructor(
-  val parameterTypes: List<ParameterType>
+  val parameterTypes: List<Type>
 ) : Invokable()
