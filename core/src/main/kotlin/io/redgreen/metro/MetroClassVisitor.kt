@@ -22,7 +22,7 @@ class MetroClassVisitor : ClassVisitor(ASM4) {
     signature: String?,
     value: Any?
   ): FieldVisitor? {
-    allFields.add(Field(name, descriptor.toReadableClassName()))
+    allFields.add(Field(name, descriptor.toReadableTypeName()))
     return super.visitField(access, name, descriptor, signature, value)
   }
 
@@ -36,9 +36,8 @@ class MetroClassVisitor : ClassVisitor(ASM4) {
     val invokable = if (name == "<init>") {
       DefaultConstructor
     } else {
-      val parameterTypeName = descriptor.getParameterTypeName()
-      val parameterType = if (parameterTypeName != null) ParameterType(parameterTypeName) else null
-      Method(name, parameterType)
+      val parameterTypeNames = descriptor.getParameterTypeNames()
+      Method(name, parameterTypeNames.map(::ParameterType))
     }
     invokables.add(invokable)
     return super.visitMethod(access, name, descriptor, signature, exceptions)

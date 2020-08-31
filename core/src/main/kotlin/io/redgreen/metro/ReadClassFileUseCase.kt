@@ -8,7 +8,7 @@ class ReadClassFileUseCase {
     val classReader = ClassReader(classFileStream)
     val fieldVisitor = MetroClassVisitor()
     classReader.accept(fieldVisitor, 0)
-    return Result(classReader.className.toReadableClassName(), fieldVisitor.fields, fieldVisitor.methods)
+    return Result(classReader.className.toReadableTypeName(), fieldVisitor.fields, fieldVisitor.methods)
   }
 
   data class Result(

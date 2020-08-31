@@ -12,6 +12,7 @@ class ReadClassFileUseCaseTest {
     private const val EMPTY_CLASS_FILE = "Puppy.class"
     private const val CLASS_WITH_FIELDS_FILE = "Kitten.class"
     private const val CLASS_WITH_FIELDS_AND_METHODS_FILE = "Dino.class"
+    private const val CLASS_WITH_MULTIPLE_PARAMETERS_METHOD = "Sloth.class"
   }
 
   private val readClassFileUseCase = ReadClassFileUseCase()
@@ -61,15 +62,40 @@ class ReadClassFileUseCaseTest {
     val invokables = listOf(
       DefaultConstructor,
       Method("getName"),
-      Method("setName", ParameterType("java.lang.String")),
+      Method("setName", listOf(ParameterType("java.lang.String"))),
       Method("getBreed"),
-      Method("setBreed", ParameterType("java.lang.String"))
+      Method("setBreed", listOf(ParameterType("java.lang.String")))
     )
     val fields = listOf(
       Field("name", "java.lang.String"),
       Field("breed", "java.lang.String")
     )
     val expected = Result("io.redgreen.example.Dino", fields, invokables)
+    assertThat(actual)
+      .isEqualTo(expected)
+  }
+
+  @Test
+  fun `it should retrieve multiple parameter types from method descriptors`() {
+    // given
+    val classWithMultipleParametersMethod = readClassFile(CLASS_WITH_MULTIPLE_PARAMETERS_METHOD)
+
+    // when
+    val actual = readClassFileUseCase.invoke(classWithMultipleParametersMethod)
+
+    // then
+    val invokables = listOf(
+      DefaultConstructor,
+      Method(
+        "procrastinate",
+        listOf(
+          ParameterType("java.lang.String"),
+          ParameterType("java.util.Date"),
+          ParameterType("int")
+        )
+      )
+    )
+    val expected = Result("io.redgreen.example.Sloth", emptyList(), invokables)
     assertThat(actual)
       .isEqualTo(expected)
   }
