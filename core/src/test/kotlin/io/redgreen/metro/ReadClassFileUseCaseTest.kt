@@ -3,28 +3,22 @@ package io.redgreen.metro
 import com.google.common.truth.Truth.assertThat
 import io.redgreen.metro.ReadClassFileUseCase.Result
 import org.junit.jupiter.api.Test
-import java.io.File
-import java.io.InputStream
 
 class ReadClassFileUseCaseTest {
   companion object {
-    private const val CLASS_FILES_PATH = "./../core-test-fixtures/build/classes/java/main/io/redgreen/example"
-    private const val EMPTY_CLASS_FILE = "Puppy.class"
-    private const val CLASS_WITH_FIELDS_FILE = "Kitten.class"
-    private const val CLASS_WITH_FIELDS_AND_METHODS_FILE = "Dino.class"
-    private const val CLASS_WITH_MULTIPLE_PARAMETERS_METHOD = "Sloth.class"
-    private const val CONSTRUCTOR_WITH_MULTIPLE_PARAMETERS = "Albatross.class"
+    private val EMPTY_CLASS = TestClassFile("Puppy")
+    private val ONLY_FIELDS_CLASS = TestClassFile("Kitten")
+    private val FIELDS_AND_METHODS_CLASS = TestClassFile("Dino")
+    private val METHOD_MULTIPLE_PARAMETERS_CLASS = TestClassFile("Sloth")
+    private val CONSTRUCTOR_WITH_MULTIPLE_PARAMETERS = TestClassFile("Albatross")
   }
 
   private val readClassFileUseCase = ReadClassFileUseCase()
 
   @Test
   fun `it should retrieve the name from a class file`() {
-    // given
-    val emptyClassFileStream = getClassInputStream(EMPTY_CLASS_FILE)
-
     // when
-    val actual = readClassFileUseCase.invoke(emptyClassFileStream)
+    val actual = readClassFileUseCase.invoke(EMPTY_CLASS.stream())
 
     // then
     val expected = Result("io.redgreen.example.Puppy")
@@ -34,11 +28,8 @@ class ReadClassFileUseCaseTest {
 
   @Test
   fun `it should retrieve field names and types from a class file`() {
-    // given
-    val classWithFieldsStream = getClassInputStream(CLASS_WITH_FIELDS_FILE)
-
     // when
-    val actual = readClassFileUseCase.invoke(classWithFieldsStream)
+    val actual = readClassFileUseCase.invoke(ONLY_FIELDS_CLASS.stream())
 
     // then
     val fields = listOf(
@@ -53,11 +44,8 @@ class ReadClassFileUseCaseTest {
 
   @Test
   fun `it should retrieve invokables from a class file`() {
-    // given
-    val classWithFieldsAndMethodsStream = getClassInputStream(CLASS_WITH_FIELDS_AND_METHODS_FILE)
-
     // when
-    val actual = readClassFileUseCase.invoke(classWithFieldsAndMethodsStream)
+    val actual = readClassFileUseCase.invoke(FIELDS_AND_METHODS_CLASS.stream())
 
     // then
     val invokables = listOf(
@@ -78,11 +66,8 @@ class ReadClassFileUseCaseTest {
 
   @Test
   fun `it should retrieve multiple parameter types from method descriptors`() {
-    // given
-    val classWithMultipleParametersMethod = getClassInputStream(CLASS_WITH_MULTIPLE_PARAMETERS_METHOD)
-
     // when
-    val actual = readClassFileUseCase.invoke(classWithMultipleParametersMethod)
+    val actual = readClassFileUseCase.invoke(METHOD_MULTIPLE_PARAMETERS_CLASS.stream())
 
     // then
     val invokables = listOf(
@@ -103,11 +88,8 @@ class ReadClassFileUseCaseTest {
 
   @Test
   fun `it should parse constructors with multiple parameters`() {
-    // given
-    val constructorWithMultipleParametersClass = getClassInputStream(CONSTRUCTOR_WITH_MULTIPLE_PARAMETERS)
-
     // when
-    val actual = readClassFileUseCase.invoke(constructorWithMultipleParametersClass)
+    val actual = readClassFileUseCase.invoke(CONSTRUCTOR_WITH_MULTIPLE_PARAMETERS.stream())
 
     // then
     val invokables = listOf(
@@ -122,10 +104,5 @@ class ReadClassFileUseCaseTest {
 
     assertThat(actual)
       .isEqualTo(expected)
-  }
-
-  private fun getClassInputStream(classFileName: String): InputStream {
-    return File("$CLASS_FILES_PATH/$classFileName")
-      .inputStream()
   }
 }
