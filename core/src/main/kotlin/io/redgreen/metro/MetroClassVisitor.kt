@@ -33,11 +33,18 @@ class MetroClassVisitor : ClassVisitor(ASM4) {
     signature: String?,
     exceptions: Array<out String>?
   ): MethodVisitor? {
-    val invokable = if (name == "<init>") {
+    val invokable = if (name == "<init>" && descriptor == "()V") {
       DefaultConstructor
     } else {
-      val parameterTypeNames = descriptor.getParameterTypeNames()
-      Method(name, parameterTypeNames.map(::ParameterType))
+      val parameterTypes = descriptor
+        .getParameterTypeNames()
+        .map(::ParameterType)
+
+      if (name == "<init>") {
+        Constructor(parameterTypes)
+      } else {
+        Method(name, parameterTypes)
+      }
     }
     invokables.add(invokable)
     return super.visitMethod(access, name, descriptor, signature, exceptions)

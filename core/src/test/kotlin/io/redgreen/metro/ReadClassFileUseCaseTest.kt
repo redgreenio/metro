@@ -13,6 +13,7 @@ class ReadClassFileUseCaseTest {
     private const val CLASS_WITH_FIELDS_FILE = "Kitten.class"
     private const val CLASS_WITH_FIELDS_AND_METHODS_FILE = "Dino.class"
     private const val CLASS_WITH_MULTIPLE_PARAMETERS_METHOD = "Sloth.class"
+    private const val CONSTRUCTOR_WITH_MULTIPLE_PARAMETERS = "Albatross.class"
   }
 
   private val readClassFileUseCase = ReadClassFileUseCase()
@@ -20,7 +21,7 @@ class ReadClassFileUseCaseTest {
   @Test
   fun `it should retrieve the name from a class file`() {
     // given
-    val emptyClassFileStream = readClassFile(EMPTY_CLASS_FILE)
+    val emptyClassFileStream = getClassInputStream(EMPTY_CLASS_FILE)
 
     // when
     val actual = readClassFileUseCase.invoke(emptyClassFileStream)
@@ -34,7 +35,7 @@ class ReadClassFileUseCaseTest {
   @Test
   fun `it should retrieve field names and types from a class file`() {
     // given
-    val classWithFieldsStream = readClassFile(CLASS_WITH_FIELDS_FILE)
+    val classWithFieldsStream = getClassInputStream(CLASS_WITH_FIELDS_FILE)
 
     // when
     val actual = readClassFileUseCase.invoke(classWithFieldsStream)
@@ -53,7 +54,7 @@ class ReadClassFileUseCaseTest {
   @Test
   fun `it should retrieve invokables from a class file`() {
     // given
-    val classWithFieldsAndMethodsStream = readClassFile(CLASS_WITH_FIELDS_AND_METHODS_FILE)
+    val classWithFieldsAndMethodsStream = getClassInputStream(CLASS_WITH_FIELDS_AND_METHODS_FILE)
 
     // when
     val actual = readClassFileUseCase.invoke(classWithFieldsAndMethodsStream)
@@ -78,7 +79,7 @@ class ReadClassFileUseCaseTest {
   @Test
   fun `it should retrieve multiple parameter types from method descriptors`() {
     // given
-    val classWithMultipleParametersMethod = readClassFile(CLASS_WITH_MULTIPLE_PARAMETERS_METHOD)
+    val classWithMultipleParametersMethod = getClassInputStream(CLASS_WITH_MULTIPLE_PARAMETERS_METHOD)
 
     // when
     val actual = readClassFileUseCase.invoke(classWithMultipleParametersMethod)
@@ -100,7 +101,30 @@ class ReadClassFileUseCaseTest {
       .isEqualTo(expected)
   }
 
-  private fun readClassFile(classFileName: String): InputStream {
+  @Test
+  fun `it should parse constructors with multiple parameters`() {
+    // given
+    val constructorWithMultipleParametersClass = getClassInputStream(CONSTRUCTOR_WITH_MULTIPLE_PARAMETERS)
+
+    // when
+    val actual = readClassFileUseCase.invoke(constructorWithMultipleParametersClass)
+
+    // then
+    val invokables = listOf(
+      Constructor(
+        listOf(
+          ParameterType("java.lang.String"),
+          ParameterType("double")
+        )
+      )
+    )
+    val expected = Result("io.redgreen.example.Albatross", emptyList(), invokables)
+
+    assertThat(actual)
+      .isEqualTo(expected)
+  }
+
+  private fun getClassInputStream(classFileName: String): InputStream {
     return File("$CLASS_FILES_PATH/$classFileName")
       .inputStream()
   }
