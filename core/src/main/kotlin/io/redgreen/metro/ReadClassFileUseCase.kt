@@ -5,10 +5,12 @@ import java.io.InputStream
 
 class ReadClassFileUseCase {
   fun invoke(classFileStream: InputStream): Result {
-    val classReader = ClassReader(classFileStream)
-    val fieldVisitor = MetroClassVisitor()
-    classReader.accept(fieldVisitor, 0)
-    return Result(classReader.className.toReadableTypeName(), fieldVisitor.fields, fieldVisitor.methods)
+    classFileStream.use { stream ->
+      val classReader = ClassReader(stream)
+      val classVisitor = MetroClassVisitor()
+      classReader.accept(classVisitor, 0)
+      return Result(classReader.className.toReadableTypeName(), classVisitor.fields, classVisitor.methods)
+    }
   }
 
   data class Result(
