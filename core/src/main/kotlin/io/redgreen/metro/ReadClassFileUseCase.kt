@@ -11,7 +11,9 @@ class ReadClassFileUseCase {
       val classReader = ClassReader(stream)
       val classVisitor = MetroClassVisitor()
       classReader.accept(classVisitor, 0)
-      return Result(classReader.className.toReadableTypeName(), classVisitor.fields, classVisitor.methods)
+      return Result(classReader.className.toReadableTypeName(), classVisitor.fields, classVisitor.methods).apply {
+        classVisitor.fields.onEach { field -> classGraph.addVertex(field.name) }
+      }
     }
   }
 
