@@ -38,4 +38,19 @@ class ClassGraphTest {
     assertThat(result.classGraph.edgeSet())
       .isEmpty()
   }
+
+  @Test
+  fun `it should return method vertices that are not connected`() {
+    // given
+    val classWithOneMethod = TestClassFile("Sloth")
+
+    // when
+    val result = readClassFileUseCase.invoke(classWithOneMethod.stream())
+
+    // then
+    assertThat(result.classGraph.vertexSet())
+      .containsExactly("procrastinate")
+    assertThat(result.classGraph.edgeSet())
+      .isEmpty()
+  }
 }
