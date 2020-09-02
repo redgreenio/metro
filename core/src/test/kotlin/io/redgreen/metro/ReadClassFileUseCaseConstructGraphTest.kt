@@ -1,13 +1,11 @@
-package io.redgreen.metro.graph
+package io.redgreen.metro
 
 import com.google.common.truth.Truth.assertThat
-import io.redgreen.metro.ReadClassFileUseCase
-import io.redgreen.metro.TestClassFile
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
-class ClassGraphTest {
+class ReadClassFileUseCaseConstructGraphTest {
   private val readClassFileUseCase = ReadClassFileUseCase()
 
   @ParameterizedTest
@@ -52,5 +50,22 @@ class ClassGraphTest {
       .containsExactly("procrastinate")
     assertThat(result.classGraph.edgeSet())
       .isEmpty()
+  }
+
+  @Test
+  fun `it should return a graph with connected edges`() {
+    // given
+    val classWithFieldsAndAccessorMethods = TestClassFile("Dino")
+
+    // when
+    val result = readClassFileUseCase.invoke(classWithFieldsAndAccessorMethods.stream())
+
+    // then
+    with(result) {
+      assertThat(classGraph.vertexSet())
+        .containsExactly("name", "getName", "setName", "breed", "getBreed", "setBreed")
+      assertThat(classGraph.edgeSet())
+        .hasSize(4)
+    }
   }
 }

@@ -1,11 +1,18 @@
 package io.redgreen.metro
 
+import org.jgraph.graph.DefaultEdge
+import org.jgrapht.graph.DefaultDirectedGraph
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.FieldVisitor
 import org.objectweb.asm.MethodVisitor
-import org.objectweb.asm.Opcodes.ASM4
+import org.objectweb.asm.Opcodes.ASM8
 
-class MetroClassVisitor : ClassVisitor(ASM4) {
+internal class MetroClassVisitor : ClassVisitor(ASM8) {
+  companion object {
+    private const val OPCODE_GETFIELD = 0xB4
+    private const val OPCODE_PUTFIELD = 0xB5
+  }
+
   private val allFields = mutableListOf<Field>()
   private val invokables = mutableListOf<Invokable>()
 
@@ -15,6 +22,9 @@ class MetroClassVisitor : ClassVisitor(ASM4) {
   val methods: List<Invokable>
     get() = invokables.toList()
 
+  val mutableClassGraph: DefaultDirectedGraph<String, DefaultEdge> =
+    DefaultDirectedGraph(DefaultEdge::class.java)
+
   override fun visitField(
     access: Int,
     name: String,
@@ -23,6 +33,7 @@ class MetroClassVisitor : ClassVisitor(ASM4) {
     value: Any?
   ): FieldVisitor? {
     allFields.add(Field(name, descriptor.toReadableTypeName()))
+    mutableClassGraph.addVertex(name)
     return super.visitField(access, name, descriptor, signature, value)
   }
 
@@ -46,11 +57,26 @@ class MetroClassVisitor : ClassVisitor(ASM4) {
         val returnTypeName = descriptor
           .substring(descriptor.lastIndexOf(')') + 1)
           .toReadableTypeName()
+        mutableClassGraph.addVertex(name)
 
         Method(name, parameterTypes, Type(returnTypeName))
       }
     }
     invokables.add(invokable)
-    return super.visitMethod(access, name, descriptor, signature, exceptions)
+    return MetroMethodVisitor(name)
+  }
+
+  inner class MetroMethodVisitor(private val methodName: String) : MethodVisitor(ASM8) {
+    override fun visitFieldInsn(
+      opcode: Int,
+      owner: String?,
+      fieldName: String?,
+      descriptor: String?
+    ) {
+      when (opcode) {
+        OPCODE_GETFIELD, OPCODE_PUTFIELD -> mutableClassGraph.addEdge(methodName, fieldName)
+      }
+      super.visitFieldInsn(opcode, owner, fieldName, descriptor)
+    }
   }
 }

@@ -12,10 +12,9 @@ class ReadClassFileUseCase {
       val classVisitor = MetroClassVisitor()
       classReader.accept(classVisitor, 0)
 
-      return Result(classReader.className.toReadableTypeName(), classVisitor.fields, classVisitor.methods).apply {
-        classVisitor.fields.onEach { field -> classGraph.addVertex(field.name) }
-        classVisitor.methods.onEach { invokable -> if (invokable is Method) classGraph.addVertex(invokable.name) }
-      }
+      val className = classReader.className.toReadableTypeName()
+      return Result(className, classVisitor.fields, classVisitor.methods)
+        .apply { classGraph = classVisitor.mutableClassGraph }
     }
   }
 
@@ -24,6 +23,6 @@ class ReadClassFileUseCase {
     val fields: List<Field> = emptyList(),
     val invokables: List<Invokable> = listOf(DefaultConstructor)
   ) {
-    val classGraph: DefaultDirectedGraph<String, DefaultEdge> = DefaultDirectedGraph(DefaultEdge::class.java)
+    lateinit var classGraph: DefaultDirectedGraph<String, DefaultEdge>
   }
 }
