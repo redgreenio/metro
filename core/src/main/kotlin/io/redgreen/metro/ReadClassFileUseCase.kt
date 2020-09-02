@@ -1,5 +1,7 @@
 package io.redgreen.metro
 
+import org.jgraph.graph.DefaultEdge
+import org.jgrapht.graph.DefaultDirectedGraph
 import org.objectweb.asm.ClassReader
 import java.io.InputStream
 
@@ -17,5 +19,7 @@ class ReadClassFileUseCase {
     val className: String,
     val fields: List<Field> = emptyList(),
     val invokables: List<Invokable> = listOf(DefaultConstructor)
-  )
+  ) {
+    val classGraph: DefaultDirectedGraph<String, DefaultEdge> = DefaultDirectedGraph(DefaultEdge::class.java)
+  }
 }

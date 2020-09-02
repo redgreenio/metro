@@ -9,6 +9,10 @@ buildscript {
     ],
     asm          : 'org.ow2.asm:asm:8.0.1',
     logback      : 'ch.qos.logback:logback-classic:1.2.3',
+    jgrapht      : [
+      core: 'org.jgrapht:jgrapht-core:1.1.0',
+      ext : 'org.jgrapht:jgrapht-ext:1.1.0',
+    ],
 
     // Code Quality
     detekt       : [
@@ -23,6 +27,7 @@ buildscript {
       params : 'org.junit.jupiter:junit-jupiter-params:5.6.0'
     ],
     truth        : 'com.google.truth:truth:1.0.1',
-    mockitoKotlin: 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
+    mockitoKotlin: 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0',
+    approvaltests: 'com.approvaltests:approvaltests:9.3.0',
   ]
 }
