@@ -11,11 +11,14 @@ private const val CLASS_FILE_DOUBLE = "D"
 private const val JAVA_DOUBLE = "double"
 private const val CLASS_FILE_VOID = "V"
 private const val JAVA_VOID = "void"
+private const val CLASS_FILE_BOOLEAN = "Z"
+private const val JAVA_BOOLEAN = "boolean"
 
 internal fun String.toReadableTypeName(): String = when {
   this == CLASS_FILE_INT -> JAVA_INT
   this == CLASS_FILE_DOUBLE -> JAVA_DOUBLE
   this == CLASS_FILE_VOID -> JAVA_VOID
+  this == CLASS_FILE_BOOLEAN -> JAVA_BOOLEAN
   startsWith(L) && endsWith(SEMI_COLON) -> replace(FORWARD_SLASH, DOT).substring(1, this.length - 1)
   contains(FORWARD_SLASH) -> replace(FORWARD_SLASH, DOT)
   else -> throw UnsupportedOperationException("Unknown class name: $this")

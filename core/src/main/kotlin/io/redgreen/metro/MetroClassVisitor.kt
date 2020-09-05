@@ -11,6 +11,9 @@ internal class MetroClassVisitor : ClassVisitor(ASM8) {
   companion object {
     private const val OPCODE_GETFIELD = 0xB4
     private const val OPCODE_PUTFIELD = 0xB5
+    private const val OPCODE_INVOKESPECIAL = 0xB7
+
+    private const val OPCODE_CONSTRUCTOR = "<init>"
   }
 
   private val allFields = mutableListOf<Field>()
@@ -67,6 +70,22 @@ internal class MetroClassVisitor : ClassVisitor(ASM8) {
   }
 
   inner class MetroMethodVisitor(private val methodName: String) : MethodVisitor(ASM8) {
+    override fun visitMethodInsn(
+      opcode: Int,
+      owner: String?,
+      name: String?,
+      descriptor: String?,
+      isInterface: Boolean
+    ) {
+      if (opcode == OPCODE_INVOKESPECIAL && name != OPCODE_CONSTRUCTOR) {
+        if (!mutableClassGraph.vertexSet().contains(name)) {
+          mutableClassGraph.addVertex(name)
+        }
+        mutableClassGraph.addEdge(methodName, name)
+      }
+      super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+    }
+
     override fun visitFieldInsn(
       opcode: Int,
       owner: String?,

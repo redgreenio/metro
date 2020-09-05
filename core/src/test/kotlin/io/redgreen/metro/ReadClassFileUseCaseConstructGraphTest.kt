@@ -61,11 +61,24 @@ class ReadClassFileUseCaseConstructGraphTest {
     val result = readClassFileUseCase.invoke(classWithFieldsAndAccessorMethods.stream())
 
     // then
-    with(result) {
-      assertThat(classGraph.vertexSet())
-        .containsExactly("name", "getName", "setName", "breed", "getBreed", "setBreed")
-      assertThat(classGraph.edgeSet())
-        .hasSize(4)
-    }
+    assertThat(result.classGraph.vertexSet())
+      .containsExactly("name", "getName", "setName", "breed", "getBreed", "setBreed")
+    assertThat(result.classGraph.edgeSet())
+      .hasSize(4)
+  }
+
+  @Test
+  fun `it should return a graph with connected edges for private method calls`() {
+    // given
+    val classWithPrivateMethodCalls = TestClassFile("Mario")
+
+    // when
+    val result = readClassFileUseCase.invoke(classWithPrivateMethodCalls.stream())
+
+    // then
+    assertThat(result.classGraph.vertexSet())
+      .containsExactly("move", "isBlocked", "jump", "walk")
+    assertThat(result.classGraph.edgeSet())
+      .hasSize(3)
   }
 }
