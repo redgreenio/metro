@@ -60,4 +60,17 @@ class ClassVisualizerTest {
     // then
     Approvals.verify(ImageApprover.create(graphImage))
   }
+
+  @Test
+  fun `it should draw a graph that has private method calls`() {
+    // given
+    val classWithPrivateMethodCallsResult = readClassFileUseCase
+      .invoke(TestClassFile("Mario").stream())
+
+    // when
+    val graphImage = ClassVisualizer.visualize(classWithPrivateMethodCallsResult)
+
+    // then
+    Approvals.verify(ImageApprover.create(graphImage))
+  }
 }
