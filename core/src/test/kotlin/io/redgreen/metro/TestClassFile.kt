@@ -7,6 +7,7 @@ import java.io.InputStream
  * This class uses compiled classes from the 'core-test-fixtures' module for testing. It targets the module's
  * build directory and uses class names to access compiled class files.
  */
+@Deprecated("Use [io.redgreen.metro.Context] instead.", level = DeprecationLevel.WARNING)
 class TestClassFile(
   private val name: String
 ) {
